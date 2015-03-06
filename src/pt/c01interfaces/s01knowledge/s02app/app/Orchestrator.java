@@ -19,7 +19,6 @@ public class Orchestrator
 		IEnquirer enq;
 		IResponder resp;
 		IStatistics stat;
-		
         for (int animal = 0; animal < listaAnimais.length; animal++) {
 			System.out.println("Enquirer com " + listaAnimais[animal] + "...");
 			stat = new Statistics();
