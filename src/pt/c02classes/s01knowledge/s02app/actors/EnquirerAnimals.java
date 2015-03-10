@@ -7,6 +7,8 @@ import pt.c02classes.s01knowledge.s01base.inter.IEnquirer;
 import pt.c02classes.s01knowledge.s01base.inter.IObjetoConhecimento;
 import pt.c02classes.s01knowledge.s01base.inter.IResponder;
 
+import java.util.ArrayList;
+
 public class EnquirerAnimals implements IEnquirer {
 
 	IResponder responder;
@@ -20,23 +22,60 @@ public class EnquirerAnimals implements IEnquirer {
         IObjetoConhecimento obj;
 		
 		bc.setScenario("animals");
-        obj = bc.recuperaObjeto("tiranossauro");
-
+		
+		int i = 0, j = 0;
+		boolean flag = false, animalEsperado = false;
+		
+		/* Declarando vetor de strings animais e carregando o nome de todos animais */
+		String[] animais;
+		animais = bc.listaNomes();
+		/* Inicializando a string que contera a resposta */
+		String resposta = null;
+		
+		/* Declarando lista de strings para perguntas feitas e suas respectivas respostas */
+		ArrayList<String> perguntasFeitas = new ArrayList<String>();
+		ArrayList<String> respostasDadas = new ArrayList<String>();
+		
+		/* Pega as informacoes de um animal e salva em obj */
+		obj = bc.recuperaObjeto(animais[i]);
 		IDeclaracao decl = obj.primeira();
 		
-        boolean animalEsperado = true;
-		while (decl != null && animalEsperado) {
+		/* Repeticao ate encontrar animal esperado */
+        while (!animalEsperado && i < animais.length) {
 			String pergunta = decl.getPropriedade();
 			String respostaEsperada = decl.getValor();
 			
-			String resposta = responder.ask(pergunta);
-			if (resposta.equalsIgnoreCase(respostaEsperada))
+			/* Verificando se a pergunta ja foi feita */
+			for (j = 0, flag = false; j < perguntasFeitas.size() && !flag; j++)
+				if (perguntasFeitas.get(j).equalsIgnoreCase(pergunta)) {
+					flag = true;
+					resposta = respostasDadas.get(j);
+				}
+						
+			/* Pergunta-se, caso ainda nao tenha sido perguntada essa pergunta e adiciona-se estas perguntas na lista caso contrario */
+			if (!flag) {
+				resposta = responder.ask(pergunta);
+				perguntasFeitas.add(pergunta);
+				respostasDadas.add(resposta);
+			}
+			/* Verificando a resposta */
+			if (resposta.equalsIgnoreCase(respostaEsperada)) {
 				decl = obj.proxima();
-			else
-				animalEsperado = false;
-		}
+				/* Caso nao haja mais perguntas e todas estao corretas, o animal foi encontrado */
+				if (decl == null)
+					animalEsperado = true;
+			}
+			
+			/* Caso esteja errada a resposta vai pro proximo animal */
+			else {
+				i++;
+				/* Pega as informacoes de um animal e salva em obj */
+				obj = bc.recuperaObjeto(animais[i]);
+				decl = obj.primeira();
+			}
 		
-		boolean acertei = responder.finalAnswer("tiranossauro");
+        }
+		boolean acertei = responder.finalAnswer(animais[i]);
 		
 		if (acertei)
 			System.out.println("Oba! Acertei!");
@@ -45,5 +84,4 @@ public class EnquirerAnimals implements IEnquirer {
 		
 		return acertei;
 	}
-
 }
