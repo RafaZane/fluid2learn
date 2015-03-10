@@ -1,8 +1,6 @@
 package pt.c01interfaces.s01knowledge.s02app.actors;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
 import pt.c01interfaces.s01knowledge.s01base.impl.BaseConhecimento;
 import pt.c01interfaces.s01knowledge.s01base.inter.IBaseConhecimento;
@@ -52,9 +50,10 @@ public class Enquirer implements IEnquirer
         		k=0;
         		String pergunta = decl.getPropriedade();
         		/* Se ja foi feita alguma pergunta */
-        		if(perguntasFeitas.size() != 0) {
+        		if(perguntasFeitas.size() != 0)
         			/* Percorre as perguntas feitas e para quando for igual a pergunta atual ou quando percorrer todas as perguntas ja feitas */
         			for(k=0; k < perguntasFeitas.size() && !(perguntasFeitas.get(k).equalsIgnoreCase(pergunta)); k++);
+        		
         		/* Resposta esperada para o animal em questao */
     			String respostaEsperada = decl.getValor();
     			
@@ -83,7 +82,7 @@ public class Enquirer implements IEnquirer
         			animalEsperado = false;
         	}
         	
-        	i++;
+        		i++;
         }
 		
 		boolean acertei = responder.finalAnswer(animais[i-1]);
