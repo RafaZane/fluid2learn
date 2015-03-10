@@ -21,77 +21,64 @@ public class Enquirer implements IEnquirer
 	@Override
 	public void connect(IResponder responder)
 	{
-		int i=0, k=0;
         IBaseConhecimento bc = new BaseConhecimento();
-        /* Contem o nome de todos os animais */
-        String[] animais;
-        /* Lista do tipo string com todas as perguntas feitas */
-        ArrayList<String> perguntasFeitas = new ArrayList<String>();
-        /* Lista do tipo string com as respostas para essas perguntas */
-        ArrayList<String> respostasDadas = new ArrayList<String>();
-        
-    	boolean animalEsperado = false;
-    	
-    	/* Pega o nome de tods os animais */
-        animais = bc.listaNomes();
-        
-        /* Emquanto não encontrar o animal esperado */
-        while(!animalEsperado) {
-        	
-        	/* Pega as informacoes de um animal e salva em obj */
-        	obj = bc.recuperaObjeto(animais[i]);
-        
-        	IDeclaracao decl = obj.primeira();
+		int i = 0, j = 0;
+		boolean flag = false, animalEsperado = false;
 		
-        	animalEsperado = true;
-        	
-        	/* Enquanto nao encontrar o animal esperado e ainda houver declaracoes */
-        	while (decl != null && animalEsperado) {
-        		k=0;
-        		String pergunta = decl.getPropriedade();
-        		/* Se ja foi feita alguma pergunta */
-        		if(perguntasFeitas.size() != 0)
-        			/* Percorre as perguntas feitas e para quando for igual a pergunta atual ou quando percorrer todas as perguntas ja feitas */
-        			for(k=0; k < perguntasFeitas.size() && !(perguntasFeitas.get(k).equalsIgnoreCase(pergunta)); k++);
-        		
-        		/* Resposta esperada para o animal em questao */
-    			String respostaEsperada = decl.getValor();
-    			
-    			/* Resposta dada para a pergunta atual */
-    			String resposta;
-    			
-    			/* Se foram percorridas todas as perguntas */
-        		if(k+1 > perguntasFeitas.size()) {
-        			/* Adiciona a pergunta atual as perguntas feitas */
-        			perguntasFeitas.add(pergunta);
-        			
-        			/* Recebe a perguntar do responder */
-    				resposta = responder.ask(pergunta);
-    				
-        			/* Salva a resposta atual a lista de respostas */
-        			respostasDadas.add(resposta);
-        			
-        		} else {
-        			/* Se encontrou a pergunta nas perguntas feitas, faz a resposta atual ser igual a resposta dada para essa pergunta anteriormente */
-        			resposta = respostasDadas.get(k);
-        		}
-        		
-        		if (resposta.equalsIgnoreCase(respostaEsperada))
-        			decl = obj.proxima();
-        		else
-        			animalEsperado = false;
-        	}
-        	
-        		i++;
-        }
+		/* Declarando vetor de strings animais e carregando o nome de todos animais */
+		String[] animais;
+		animais = bc.listaNomes();
+		/* Inicializando a string que contera a resposta */
+		String resposta = null;
 		
-		boolean acertei = responder.finalAnswer(animais[i-1]);
+		/* Declarando lista de strings para perguntas feitas e suas respectivas respostas */
+		ArrayList<String> perguntasFeitas = new ArrayList<String>();
+		ArrayList<String> respostasDadas = new ArrayList<String>();
+		
+		/* Pega as informacoes de um animal e salva em obj */
+		obj = bc.recuperaObjeto(animais[i]);
+		IDeclaracao decl = obj.primeira();
+		
+		/* Repeticao ate encontrar animal esperado */
+        while (!animalEsperado && i < animais.length) {
+			String pergunta = decl.getPropriedade();
+			String respostaEsperada = decl.getValor();
+			
+			/* Verificando se a pergunta ja foi feita */
+			for (j = 0, flag = false; j < perguntasFeitas.size() && !flag; j++)
+				if (perguntasFeitas.get(j).equalsIgnoreCase(pergunta)) {
+					flag = true;
+					resposta = respostasDadas.get(j);
+				}
+						
+			/* Pergunta-se, caso ainda nao tenha sido perguntada essa pergunta e adiciona-se estas perguntas na lista caso contrario */
+			if (!flag) {
+				resposta = responder.ask(pergunta);
+				perguntasFeitas.add(pergunta);
+				respostasDadas.add(resposta);
+			}
+			/* Verificando a resposta */
+			if (resposta.equalsIgnoreCase(respostaEsperada)) {
+				decl = obj.proxima();
+				/* Caso nao haja mais perguntas e todas estao corretas, o animal foi encontrado */
+				if (decl == null)
+					animalEsperado = true;
+			}
+			
+			/* Caso esteja errada a resposta vai pro proximo animal */
+			else {
+				i++;
+				/* Pega as informacoes de um animal e salva em obj */
+				obj = bc.recuperaObjeto(animais[i]);
+				decl = obj.primeira();
+			}
+		}
+		
+		boolean acertei = responder.finalAnswer(animais[i]);
 		
 		if (acertei)
 			System.out.println("Oba! Acertei!");
 		else
 			System.out.println("fuem! fuem! fuem!");
-
 	}
-
 }
