@@ -33,8 +33,7 @@ public class EnquirerMaze implements IEnquirer {
 		while (!saidaEncontrada) {
 			
 			while(!caminhoInvalido) {
-				VerificaSaida(saidaEncontrada);
-				
+				saidaEncontrada = VerificaSaida();
 				if(!saidaEncontrada) {
 					String resposta = responder.ask(direcao.toString());
 					
@@ -58,15 +57,15 @@ public class EnquirerMaze implements IEnquirer {
 			}
 			caminhoInvalido = false;
 		}
-
-		return true;
+		return responder.finalAnswer("aqui");
 	}
 	
-	void VerificaSaida(boolean saidaEncontrada) {
+	boolean VerificaSaida() {
 		String resposta = responder.ask("aqui");
 		if(resposta.equalsIgnoreCase("saida")) {
-			saidaEncontrada = true;
+			return true;
 		}
+		return false;
 	}
 	
 	void TrocaDirecao() {
