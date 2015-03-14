@@ -51,13 +51,16 @@ public class EnquirerMaze implements IEnquirer {
 				} else {
 					caminhoInvalido = true;
 				}
-				System.out.print(pontosPercorridos.get(pontosPercorridos.size()-1).x);
-				System.out.print(pontosPercorridos.get(pontosPercorridos.size()-1).y);
-				System.out.println();
 			}
 			caminhoInvalido = false;
 		}
-		return responder.finalAnswer("aqui");
+		
+		if (responder.finalAnswer("cheguei"))
+			System.out.println("Você encontrou a saida!");
+		else
+			System.out.println("Fuém fuém fuém!");
+		
+		return true;
 	}
 	
 	boolean VerificaSaida() {
